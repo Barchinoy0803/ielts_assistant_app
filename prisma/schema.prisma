@@ -1,0 +1,231 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id       String @id @default(uuid())
+  name     String
+  email    String @unique
+  password String
+  role     ROLE
+}
+
+model Region {
+  id     String   @id @default(uuid())
+  name   String
+  Center Center[]
+}
+
+model Center {
+  id       String      @id @default(uuid())
+  name     String
+  document String
+  location String
+  regionId String
+  region   Region      @relation(fields: [regionId], references: [id])
+  image    String
+  status   STATUS
+  email    String      @unique
+  password String
+  role     CENTER_ROLE
+  Teacher  Teacher[]
+}
+
+model Teacher {
+  id          String   @id @default(uuid())
+  name        String
+  email       String   @unique
+  password    String
+  phone       String
+  certificate String
+  status      STATUS   @default(ACTIVE)
+  image       String
+  centerId    String
+  center      Center   @relation(fields: [centerId], references: [id])
+  Group1      Group[]  @relation("teacher")
+  Group2      Group[]  @relation("checker")
+  Result      Result[]
+}
+
+model Group {
+  id               String    @id @default(uuid())
+  name             String
+  teacherId        String
+  teacher          Teacher   @relation(name: "teacher", fields: [teacherId], references: [id])
+  startTime        DateTime
+  endTime          DateTime
+  checkerTeacherId String
+  checkerTeacher   Teacher   @relation(name: "checker", fields: [checkerTeacherId], references: [id])
+  Student          Student[]
+}
+
+model Student {
+  id       String @id @default(uuid())
+  fullname String
+  password String
+  phone    String
+  groupId  String
+  group    Group  @relation(fields: [groupId], references: [id])
+  Exam     Exam[]
+}
+
+model Reading_Variant {
+  id           String         @id @default(uuid())
+  variant_name String //test1, test2
+  isReady      Boolean
+  Reading_Part Reading_Part[]
+  Exam         Exam[]
+}
+
+model Reading_Part {
+  id                    String                  @id @default(uuid())
+  part_name             String // part1, part2, part3
+  reading_variant_id    String
+  reading_variant       Reading_Variant         @relation(fields: [reading_variant_id], references: [id])
+  Reading_Part_Question Reading_Part_Question[]
+}
+
+model Reading_Part_Question {
+  id               String                @id @default(uuid())
+  description      String
+  question_type    READING_QUESTION_TYPE
+  reading_part_id  String
+  reading_part     Reading_Part          @relation(fields: [reading_part_id], references: [id])
+  Reading_Question Reading_Question[]
+}
+
+model Reading_Question {
+  id                      String                @id @default(uuid())
+  question_number         Int
+  question_text           String
+  answer_variants         String
+  correct_variant         String
+  reading_part_qestion_id String
+  reading_part_qestion    Reading_Part_Question @relation(fields: [reading_part_qestion_id], references: [id])
+}
+
+model Writing_Variant {
+  id           String                  @id @default(uuid())
+  variant_name String // test1, test2 
+  isReady      Boolean
+  Writing_Task Writing_Task_Overview[]
+  Exam         Exam[]
+}
+
+model Writing_Task_Overview {
+  id                 String            @id @default(uuid())
+  writing_variant_id String
+  writing_variant    Writing_Variant   @relation(fields: [writing_variant_id], references: [id])
+  task_type          WRITING_TASK_TYPE
+  Writing_Task       Writing_Task[]
+}
+
+model Writing_Task {
+  id                       String                @id @default(uuid())
+  task_name                String // Nowadays many people prefer domectic animals but  some likes parrots
+  description              String //this is the agree/disagrre essay type. Time 2,5hour
+  image                    String?
+  writing_task_overview_id String
+  writing_task_overview    Writing_Task_Overview @relation(fields: [writing_task_overview_id], references: [id])
+}
+
+model Speaking_Variant {
+  id            String          @id @default(uuid())
+  variant_name  String
+  isReady       Boolean
+  Speaking_Part Speaking_Part[]
+  Exam          Exam[]
+}
+
+model Speaking_Part {
+  id                 String              @id @default(uuid())
+  taskName           SPEAKING_PART_TYPE
+  speaking_variantId String
+  spiaking_variant   Speaking_Variant    @relation(fields: [speaking_variantId], references: [id])
+  Speaking_Question  Speaking_Question[]
+}
+
+model Speaking_Question {
+  id               String        @id @default(uuid())
+  description      String
+  task             String
+  image            String
+  speaking_part_id String
+  speaking_part    Speaking_Part @relation(fields: [speaking_part_id], references: [id])
+}
+
+model Exam {
+  id                   String           @id @default(uuid())
+  reading_variant_id   String
+  reading_variant      Reading_Variant  @relation(fields: [reading_variant_id], references: [id])
+  listening_variant_id String
+  writing_variant_id   String
+  writing_variant      Writing_Variant  @relation(fields: [writing_variant_id], references: [id])
+  speaking_variant_id  String
+  speaking_variant     Speaking_Variant @relation(fields: [speaking_variant_id], references: [id])
+  student_id           String
+  student              Student          @relation(fields: [student_id], references: [id])
+  Result               Result?
+}
+
+model Result {
+  id               String  @id @default(uuid())
+  examId           String  @unique
+  exam             Exam    @relation(fields: [examId], references: [id])
+  speaking_score   Float
+  listening_score  Float
+  reading_score    Float
+  writing_score    Float
+  speaking_comment String
+  writing_comment  String
+  teacherId        String
+  teacher          Teacher @relation(fields: [teacherId], references: [id])
+}
+
+enum STATUS {
+  PENDING
+  ACTIVE
+  INACTIVE
+}
+
+enum CENTER_ROLE {
+  CENTER
+}
+
+enum ROLE {
+  ADMIN
+  SUPERADMIN
+}
+
+enum READING_QUESTION_TYPE {
+  MULTIPLE_CHOICE
+  TRUE_FALSE_NOT_GIVEN
+  YES_NO_NOT_GIVEN
+  MATCHING_HEADINGS
+  MATCHING_INFORMATION
+  MATCHING_FEATURES
+  MATCHING_SENTENCE_ENDINGS
+  SENTENCE_COMPLETION
+  SUMMARY_COMPLETION
+  NOTE_COMPLETION
+  DIAGRAM_LABEL_COMPLETION
+  SHORT_ANSWER
+  LIST_SELECTION
+  GLOBAL_MULTIPLE_CHOICE
+}
+
+enum WRITING_TASK_TYPE {
+  TASK1
+  TASK2
+}
+
+enum SPEAKING_PART_TYPE {
+  PART1
+  PART2
+  PART3
+}

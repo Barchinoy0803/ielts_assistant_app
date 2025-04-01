@@ -9,7 +9,7 @@ export class EducationalCenterController {
 
   @Post()
   create(@Body() createEducationalCenterDto: CreateEducationalCenterDto) {
-    return this.educationalCenterService.create(createEducationalCenterDto);
+    return this.educationalCenterService.register(createEducationalCenterDto);
   }
 
   @Get()
@@ -19,16 +19,16 @@ export class EducationalCenterController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.educationalCenterService.findOne(+id);
+    return this.educationalCenterService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateEducationalCenterDto: UpdateEducationalCenterDto) {
-    return this.educationalCenterService.update(+id, updateEducationalCenterDto);
+    return this.educationalCenterService.update(id, updateEducationalCenterDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.educationalCenterService.remove(+id);
+    return this.educationalCenterService.remove(id);
   }
 }
