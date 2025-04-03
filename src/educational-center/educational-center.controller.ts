@@ -7,10 +7,16 @@ import { UpdateEducationalCenterDto } from './dto/update-educational-center.dto'
 export class EducationalCenterController {
   constructor(private readonly educationalCenterService: EducationalCenterService) {}
 
-  @Post()
-  create(@Body() createEducationalCenterDto: CreateEducationalCenterDto) {
+  @Post('register')
+  register(@Body() createEducationalCenterDto: CreateEducationalCenterDto) {
     return this.educationalCenterService.register(createEducationalCenterDto);
   }
+
+  @Post('login')
+  login(@Body() createEducationalCenterDto: CreateEducationalCenterDto) {
+    return this.educationalCenterService.login(createEducationalCenterDto);
+  }
+
 
   @Get()
   findAll() {

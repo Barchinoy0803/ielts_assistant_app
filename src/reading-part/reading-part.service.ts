@@ -18,7 +18,12 @@ export class ReadingPartService {
 
   async findAll() {
     try {
-      let parts = await this.prisma.reading_Part.findMany()
+      let parts = await this.prisma.reading_Part.findMany({
+        include: {
+          Reading_Part_Question: true,
+          reading_variant: true
+        }
+      })
       if (!parts.length) return new HttpException("Not found", HttpStatus.NOT_FOUND)
       return parts
     } catch (error) {
@@ -28,7 +33,13 @@ export class ReadingPartService {
 
   async findOne(id: string) {
     try {
-      let part = await this.prisma.reading_Part.findUnique({ where: { id } })
+      let part = await this.prisma.reading_Part.findUnique({
+        where: { id },
+        include: {
+          Reading_Part_Question: true,
+          reading_variant: true
+        }
+      })
       if (!part) return new HttpException("Not found", HttpStatus.NOT_FOUND)
       return part
     } catch (error) {

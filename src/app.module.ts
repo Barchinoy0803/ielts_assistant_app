@@ -20,9 +20,14 @@ import { SpeakingQuestionModule } from './speaking-question/speaking-question.mo
 import { ResultModule } from './result/result.module';
 import { ExamModule } from './exam/exam.module';
 import { AdminModule } from './admin/admin.module';
+import { MailModule } from './mail/mail.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [EducationalCenterModule, TeacherModule, GroupModule, StudentModule, PrismaModule, RegionModule, ReadingVariantModule, ReadingPartModule, ReadingPartQuestionModule, ReadingQuestionModule, WritingVariantModule, WritingTaskOverviewModule, WritingTaskModule, SpeakingVariantModule, SpeakingPartModule, SpeakingQuestionModule, ResultModule, ExamModule, AdminModule],
+  imports: [
+    EducationalCenterModule, TeacherModule, GroupModule, StudentModule, PrismaModule, RegionModule, ReadingVariantModule, ReadingPartModule, ReadingPartQuestionModule, ReadingQuestionModule, WritingVariantModule, WritingTaskOverviewModule, WritingTaskModule, SpeakingVariantModule, SpeakingPartModule, SpeakingQuestionModule, ResultModule, ExamModule, AdminModule, MailModule,
+    ConfigModule.forRoot({ isGlobal: true })
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

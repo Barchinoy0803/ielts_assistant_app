@@ -8,10 +8,11 @@ datasource db {
 }
 
 model Admin {
-  id       String @id @default(uuid())
+  id       String          @id @default(uuid())
   name     String
-  email    String @unique
+  email    String          @unique
   password String
+  status   REGISTER_STATUS @default(INACTIVE)
   role     ROLE
 }
 
@@ -22,18 +23,19 @@ model Region {
 }
 
 model Center {
-  id       String      @id @default(uuid())
-  name     String
-  document String
-  location String
-  regionId String
-  region   Region      @relation(fields: [regionId], references: [id])
-  image    String
-  status   STATUS
-  email    String      @unique
-  password String
-  role     CENTER_ROLE
-  Teacher  Teacher[]
+  id              String          @id @default(uuid())
+  name            String
+  document        String
+  location        String
+  regionId        String
+  region          Region          @relation(fields: [regionId], references: [id])
+  image           String
+  status          STATUS
+  email           String          @unique
+  password        String
+  register_status REGISTER_STATUS @default(INACTIVE)
+  role            CENTER_ROLE
+  Teacher         Teacher[]
 }
 
 model Teacher {
@@ -103,8 +105,8 @@ model Reading_Question {
   id                      String                @id @default(uuid())
   question_number         Int
   question_text           String
-  answer_variants         String
-  correct_variant         String
+  answer_variants         String[]
+  correct_variant         String[]
   reading_part_qestion_id String
   reading_part_qestion    Reading_Part_Question @relation(fields: [reading_part_qestion_id], references: [id])
 }
@@ -191,6 +193,11 @@ enum STATUS {
   PENDING
   ACTIVE
   INACTIVE
+}
+
+enum REGISTER_STATUS {
+  INACTIVE
+  ACTIVE
 }
 
 enum CENTER_ROLE {

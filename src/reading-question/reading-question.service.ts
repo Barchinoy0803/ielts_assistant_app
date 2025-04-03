@@ -5,7 +5,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class ReadingQuestionService {
-  constructor(private readonly prisma: PrismaService){}
+  constructor(private readonly prisma: PrismaService) { }
 
   async create(createReadingQuestionDto: CreateReadingQuestionDto) {
     try {
@@ -18,7 +18,11 @@ export class ReadingQuestionService {
 
   async findAll() {
     try {
-      let questions = await this.prisma.reading_Question.findMany()
+      let questions = await this.prisma.reading_Question.findMany({
+        include: {
+          reading_part_qestion: true
+        }
+      })
       if (!questions.length) return new HttpException("Not found", HttpStatus.NOT_FOUND)
       return questions
     } catch (error) {
@@ -28,7 +32,12 @@ export class ReadingQuestionService {
 
   async findOne(id: string) {
     try {
-      let question = await this.prisma.reading_Question.findUnique({ where: { id } })
+      let question = await this.prisma.reading_Question.findUnique({
+        where: { id },
+        include: {
+          reading_part_qestion: true
+        }
+      })
       if (!question) return new HttpException("Not found", HttpStatus.NOT_FOUND)
       return question
     } catch (error) {

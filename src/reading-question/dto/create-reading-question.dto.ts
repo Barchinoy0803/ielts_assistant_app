@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString } from "class-validator"
+import { IsArray, IsNotEmpty, IsNumber, IsString } from "class-validator"
 
 export class CreateReadingQuestionDto {
     @IsNumber()
@@ -9,13 +9,13 @@ export class CreateReadingQuestionDto {
     @IsNotEmpty()
     question_text: string
 
-    @IsString()
+    @IsArray()
     @IsNotEmpty()
-    answer_variants: string
+    answer_variants: string[]
 
-    @IsString()
+    @IsArray()
     @IsNotEmpty()
-    correct_variant: string
+    correct_variant: string[]
 
     @IsString()
     @IsNotEmpty()

@@ -1,26 +1,71 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateTeacherDto } from './dto/create-teacher.dto';
 import { UpdateTeacherDto } from './dto/update-teacher.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class TeacherService {
-  create(createTeacherDto: CreateTeacherDto) {
-    return 'This action adds a new teacher';
+  constructor(private readonly prisma: PrismaService) { }
+
+  async create(createTeacherDto: CreateTeacherDto) {
+    try {
+      let teacher = await this.prisma.teacher.create({ data: createTeacherDto })
+      return teacher
+    } catch (error) {
+      return new InternalServerErrorException(error)
+    }
   }
 
-  findAll() {
-    return `This action returns all teacher`;
+  async findAll() {
+    try {
+      let teachers = await this.prisma.teacher.findMany({
+        include: {
+          center: true,
+          Group1: true,
+          Group2: true
+        }
+      })
+      return teachers
+    } catch (error) {
+      return new InternalServerErrorException(error)
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} teacher`;
+  async findOne(id: string) {
+    try {
+      let teacher = await this.prisma.teacher.findUnique({
+        where: { id },
+        include: {
+          center: true,
+          Group1: true,
+          Group2: true
+        }
+      })
+      if (!teacher) return new HttpException("Not found", HttpStatus.NOT_FOUND)
+      return teacher
+    } catch (error) {
+      return new InternalServerErrorException(error)
+    }
   }
 
-  update(id: number, updateTeacherDto: UpdateTeacherDto) {
-    return `This action updates a #${id} teacher`;
+  async update(id: string, updateTeacherDto: UpdateTeacherDto) {
+    try {
+      let updatedTeacher = await this.prisma.teacher.update({
+        data: updateTeacherDto,
+        where: { id }
+      })
+      return updatedTeacher
+    } catch (error) {
+      return new InternalServerErrorException(error)
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} teacher`;
+  async remove(id: string) {
+    try {
+      let deleted = await this.prisma.teacher.delete({ where: { id } })
+      return deleted
+    } catch (error) {
+      return new InternalServerErrorException(error)
+    }
   }
 }

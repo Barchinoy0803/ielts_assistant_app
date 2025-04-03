@@ -18,7 +18,12 @@ export class ReadingVariantService {
 
   async findAll() {
     try {
-      let readingVariants = await this.prisma.reading_Variant.findMany()
+      let readingVariants = await this.prisma.reading_Variant.findMany({
+        include: {
+          Reading_Part: true,
+          Exam: true
+        }
+      })
       if (!readingVariants.length) return new HttpException("Not found", HttpStatus.NOT_FOUND)
       return readingVariants
     } catch (error) {
@@ -28,7 +33,13 @@ export class ReadingVariantService {
 
   async findOne(id: string) {
     try {
-      let readingVariant = await this.prisma.reading_Variant.findUnique({ where: { id } })
+      let readingVariant = await this.prisma.reading_Variant.findUnique({
+        where: { id },
+        include: {
+          Reading_Part: true,
+          Exam: true
+        }
+      })
       if (!readingVariant) return new HttpException("Not found", HttpStatus.NOT_FOUND)
       return readingVariant
     } catch (error) {
